@@ -1,0 +1,123 @@
+
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Represents a trader's profile and performance metrics.",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "profilePhoto": { "type": "string" },
+        "balance": { "type": "number", "description": "Current overall wallet balance." },
+        "coins": { "type": "integer", "description": "Virtual currency for the shop." },
+        "inventory": { "type": "array", "items": { "type": "string" } },
+        "isPremium": { "type": "boolean", "default": false },
+        "lastLoginReward": { "type": "string", "format": "date" },
+        "lastMissionReset": { "type": "string", "format": "date" },
+        "dailyMissions": {
+          "type": "object",
+          "properties": {
+            "trades_3": { "type": "object", "properties": { "progress": { "type": "integer" }, "claimed": { "type": "boolean" } } },
+            "wins_2": { "type": "object", "properties": { "progress": { "type": "integer" }, "claimed": { "type": "boolean" } } },
+            "xp_100": { "type": "object", "properties": { "progress": { "type": "integer" }, "claimed": { "type": "boolean" } } },
+            "btc_5": { "type": "object", "properties": { "progress": { "type": "integer" }, "claimed": { "type": "boolean" } } }
+          }
+        },
+        "totalProfit": { "type": "number" },
+        "winRate": { "type": "number" },
+        "xp": { "type": "integer" },
+        "badges": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["username", "email", "balance"]
+    },
+    "Tournament": {
+      "title": "Tournament",
+      "description": "A trading competition event.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "prizePool": { "type": "number" },
+        "entryFeed": { "type": "number" },
+        "startBalance": { "type": "number" },
+        "isLive": { "type": "boolean" },
+        "startDate": { "type": "string", "format": "date-time" },
+        "endDate": { "type": "string", "format": "date-time" },
+        "activeTraders": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "isLive", "startDate", "endDate"]
+    },
+    "Trade": {
+      "title": "Trade",
+      "description": "A single trading position.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "tournamentId": { "type": "string" },
+        "asset": { "type": "string" },
+        "direction": { "type": "string", "enum": ["Long", "Short"] },
+        "leverage": { "type": "number" },
+        "positionSize": { "type": "number" },
+        "entryPrice": { "type": "number" },
+        "exitPrice": { "type": "number" },
+        "stopLoss": { "type": "number" },
+        "takeProfit": { "type": "number" },
+        "pnl": { "type": "number" },
+        "roi": { "type": "number" },
+        "status": { "type": "string", "enum": ["Open", "Closed"] },
+        "coaching": {
+          "type": "object",
+          "properties": {
+            "feedback": { "type": "string" },
+            "riskGrade": { "type": "string" },
+            "executionGrade": { "type": "string" },
+            "disciplineGrade": { "type": "string" },
+            "tip": { "type": "string" }
+          }
+        },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "closedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "asset", "direction", "status"]
+    },
+    "Challenge": {
+      "title": "Prop Firm Challenge",
+      "description": "A prop firm evaluation challenge.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "type": { "type": "string", "enum": ["Starter", "Pro", "Elite"] },
+        "status": { "type": "string", "enum": ["Active", "Passed", "Failed"] },
+        "currentBalance": { "type": "number" },
+        "initialBalance": { "type": "number" },
+        "profitTarget": { "type": "number" },
+        "maxDrawdown": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "type", "status", "initialBalance"]
+    }
+  },
+  "auth": {
+    "providers": ["email"]
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "#/backend/entities/UserProfile",
+      "description": "User profiles and global stats."
+    },
+    "/tournaments/{tournamentId}": {
+      "schema": "#/backend/entities/Tournament",
+      "description": "Available trading tournaments."
+    },
+    "/trades/{tradeId}": {
+      "schema": "#/backend/entities/Trade",
+      "description": "Global trade records."
+    },
+    "/challenges/{challengeId}": {
+      "schema": "#/backend/entities/Challenge",
+      "description": "Prop firm challenge records."
+    }
+  }
+}
